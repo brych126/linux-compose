@@ -1,0 +1,68 @@
+x-base: &base
+    stdin_open: true
+    tty: true
+    image: ubuntu:24.04
+    command: bash
+    networks:
+        - n1
+
+x-volume-def: &volume-def
+    type: volume
+    source: distro-data
+    target: /distro1-data
+
+services:
+    ubuntu-1:
+        <<: *base
+        configs: 
+        - source: my_config
+          target: rbrych_config
+          uid: "103"
+          gid: "103"
+          mode: 0440
+        volumes:
+        - <<: *volume-def
+        - type: bind
+          source: /home/brych126/Src/ubuntu-compose
+          target: /ubuntu-compose
+        networks:
+        - n2
+
+    ubuntu-2:
+        <<: *base
+        environment:
+          Brych: roman
+        configs: 
+        - app_config
+        secrets:
+        - source: brych_secret
+          target: brych_config_secret.txt
+        - token
+        volumes:
+        - custom-distro-data:/distro2-data
+
+configs:
+  my_config:
+    file: ./brych_config.txt
+  app_config:
+    content: |
+      debug=${DEBUG}
+      spring.application.admin.enabled=${DEBUG}
+      spring.application.name=${COMPOSE_PROJECT_NAME}      
+
+secrets:
+  brych_secret:
+    file: ./brych_config.txt
+  token:
+    environment: "OAUTH_TOKEN"
+
+networks:
+  n1:
+    driver: bridge
+  n2:
+
+volumes:
+  distro-data:
+  custom-distro-data:
+    external: true
+    name: ${VolumeName}

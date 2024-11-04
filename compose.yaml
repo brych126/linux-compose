@@ -1,0 +1,5 @@
+# Command to start services: VolumeName=my-vol OAUTH_TOKEN=auth_token DEBUG=true docker compose up -d
+
+include:
+- distros-compose/compose-alpine.yaml
+- distros-compose/compose-ubuntu.yaml
