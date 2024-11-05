@@ -29,7 +29,9 @@ services:
     ubuntu-2:
         <<: *base
         environment:
-          Brych: roman
+          MyEnv1: Env1
+          MyEnv2: Env3
+        env_file: ubuntu.env
         configs: 
         - app_config
         secrets:
