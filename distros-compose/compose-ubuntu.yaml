@@ -5,6 +5,7 @@ x-base: &base
     command: bash
     networks:
         - n1
+    profiles: [ubuntu] #another array syntax
 
 x-volume-def: &volume-def
     type: volume
@@ -40,11 +41,15 @@ services:
         # - token
         volumes:
         - custom-distro-data:/distro2-data
+        depends_on:
+        - ubuntu-1
 
     ubuntu-3:
         <<: *base
         image: ub-ping
         build: ../custom-ubuntu-distro
+        depends_on:
+        - ubuntu-2
 
 configs:
   my_config:
