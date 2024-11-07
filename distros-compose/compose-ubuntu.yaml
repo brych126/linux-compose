@@ -1,55 +1,55 @@
-x-base: &base
-    stdin_open: true
-    tty: true
-    image: ubuntu:24.04
-    command: bash
-    networks:
-        - n1
-    profiles: [ubuntu] #another array syntax
+x-ubuntu-base: &ubuntu-base
+  stdin_open: true
+  tty: true
+  image: ubuntu:24.04
+  command: bash
+  networks:
+    - n1
+  profiles: [linux, ubuntu] #another array syntax
 
 x-volume-def: &volume-def
-    type: volume
-    source: distro-data
-    target: /distro1-data
+  type: volume
+  source: distro-data
+  target: /distro1-data
 
 services:
-    ubuntu-1:
-        <<: *base
-        configs: 
-        - source: my_config
-          target: rbrych_config
-          mode: 0440
-        volumes:
-        - <<: *volume-def
-        - type: bind
-          source: /home/brych126/Src/ubuntu-compose
-          target: /ubuntu-compose
-        networks:
-        - n2
+  ubuntu-1:
+    <<: *ubuntu-base
+    configs:
+      - source: my_config
+        target: rbrych_config
+        mode: 0440
+    volumes:
+      - <<: *volume-def
+      - type: bind
+        source: /home/brych126/Src/ubuntu-compose
+        target: /ubuntu-compose
+    networks:
+      - n2
 
-    ubuntu-2:
-        <<: *base
-        environment:
-          MyEnv1: Env1
-          MyEnv2: Env3
-        env_file: ubuntu.env
-        configs: 
-        - app_config
-        secrets:
-        - source: brych_secret
-          target: brych_config_secret.txt
-        # - token
-        volumes:
-        - custom-distro-data:/distro2-data
-        depends_on:
-        - ubuntu-1
+  ubuntu-2:
+    <<: *ubuntu-base
+    environment:
+      MyEnv1: Env1
+      MyEnv2: Env3
+    env_file: ubuntu.env
+    configs:
+      - app_config
+    secrets:
+      - source: brych_secret
+        target: brych_config_secret.txt
+    # - token
+    volumes:
+      - custom-distro-data:/distro2-data
+    depends_on:
+      - ubuntu-1
 
-    ubuntu-3:
-        <<: *base
-        image: ub-ping
-        build: ../custom-ubuntu-distro
-        depends_on:
-        - ubuntu-2
+  ubuntu-3:
+    <<: *ubuntu-base
+    image: ub-ping
+    build: ../custom-ubuntu-distro
+    depends_on:
+      - ubuntu-2
 
 configs:
   my_config:
@@ -58,7 +58,7 @@ configs:
     content: |
       debug=${DEBUG}
       spring.application.admin.enabled=${DEBUG}
-      spring.application.name=${COMPOSE_PROJECT_NAME}      
+      spring.application.name=${COMPOSE_PROJECT_NAME}
 
 secrets:
   brych_secret:

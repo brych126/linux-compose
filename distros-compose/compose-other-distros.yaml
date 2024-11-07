@@ -1,0 +1,21 @@
+x-base: &base
+  stdin_open: true
+  tty: true
+  command: bash
+
+services:
+  alpine:
+    <<: *base
+    image: alpine:3.20
+    command: sh
+    profiles: [linux, alpine]
+
+  opensuse:
+    <<: *base
+    image: opensuse/leap:15.6
+    profiles: [linux, opensuse]
+
+  debian:
+    <<: *base
+    image: debian:11
+    profiles: [linux, debian]
